@@ -1,0 +1,111 @@
+import { useCallback, useMemo, useRef, useState } from 'react'
+import api from '../api/axios'
+import { AiGenerationContext } from './AiGenerationState'
+import { generateMockDocument } from '../utils/aiMockGenerator'
+
+const notifyMascot = (message, animation = 'idle') => {
+  window.dispatchEvent(new CustomEvent('ang:mascot-alert', {
+    detail: { message, animation },
+  }))
+}
+
+// AI 서버(Claude API)가 응답하지 않을 때만 사용하는 데모 폴백 대기 시간.
+// 백엔드 RestTemplate의 AI 호출 read timeout(180s, RestTemplateConfig)보다 짧으면
+// 백엔드가 정상적으로 문서를 생성 중인데도 프론트가 먼저 포기해 가짜 mock 문서로
+// 대체해버리는 문제가 생기므로, 그 타임아웃보다 작게 잡는다.
+const AI_GENERATE_TIMEOUT_MS = 170000
+
+// Claude API 응답이 너무 빨라 로딩 연출(단계별 진행 UI)이 끝나기 전에
+// 완료되어 버리는 것을 막기 위한 최소 로딩 체감 시간.
+const AI_MIN_LOADING_MS = 5000
+
+const wait = (ms) => new Promise((resolve) => window.setTimeout(resolve, ms))
+
+export function AiGenerationProvider({ children }) {
+  const [isGenerating, setIsGenerating] = useState(false)
+  const [currentTask, setCurrentTask] = useState(null)
+  const [lastResult, setLastResult] = useState(null)
+  const [lastError, setLastError] = useState(null)
+  const activeTaskRef = useRef(null)
+
+  const startGeneration = useCallback(async (payload, meta = {}) => {
+    if (activeTaskRef.current) {
+      throw new Error('이미 AI 문서를 생성하고 있어요. 조금만 기다려 주세요.')
+    }
+
+    const task = {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+      startedAt: new Date().toISOString(),
+      outputFormat: payload?.outputFormat || 'pdf',
+    }
+
+    activeTaskRef.current = task
+    setCurrentTask(task)
+    setLastError(null)
+    setIsGenerating(true)
+
+    notifyMascot('문서 초안을 열심히 쓰는 중이에요. 다른 일을 보고 오셔도 계속 만들고 있을게요.', 'run')
+
+    const startedAt = Date.now()
+
+    try {
+      let generatedDocument
+
+      try {
+        const response = await api.post('/documents/ai-generate', payload, {
+          timeout: AI_GENERATE_TIMEOUT_MS,
+        })
+        const resData = response.data
+
+        if (!resData?.success) {
+          throw new Error(resData?.message || 'AI 문서 생성에 실패했습니다.')
+        }
+
+        generatedDocument = resData.data
+      } catch (apiError) {
+        // AI 서버 연결 실패/무응답 시에만 데모 폴백으로 전환한다.
+        // 서버가 정상 응답한 케이스(성공 실패 메시지 등)는 위에서 이미 처리되어 여기로 오지 않는다.
+        console.warn('[AI] 서버 응답 실패, 데모 폴백으로 전환합니다:', apiError)
+        generatedDocument = await generateMockDocument(payload, meta)
+      }
+
+      const elapsedMs = Date.now() - startedAt
+      if (elapsedMs < AI_MIN_LOADING_MS) {
+        await wait(AI_MIN_LOADING_MS - elapsedMs)
+      }
+
+      setLastResult(generatedDocument)
+
+      window.dispatchEvent(new CustomEvent('ang:ai-document-generated', {
+        detail: { document: generatedDocument, task },
+      }))
+
+      notifyMascot('문서가 완성되었습니다! 내용을 확인해 보세요.', 'celebrate')
+      return generatedDocument
+    } catch (error) {
+      console.error('AI generation process error:', error)
+      const apiError = error.response?.data?.message || error.message
+      setLastError(error)
+      notifyMascot(apiError || '문서 생성이 잠깐 막혔어요. 연결 상태를 확인하고 다시 시도해 주세요.', 'idle')
+      throw error
+    } finally {
+      setIsGenerating(false)
+      setCurrentTask(null)
+      activeTaskRef.current = null
+    }
+  }, [])
+
+  const value = useMemo(() => ({
+    isGenerating,
+    currentTask,
+    lastResult,
+    lastError,
+    startGeneration,
+  }), [currentTask, isGenerating, lastError, lastResult, startGeneration])
+
+  return (
+    <AiGenerationContext.Provider value={value}>
+      {children}
+    </AiGenerationContext.Provider>
+  )
+}

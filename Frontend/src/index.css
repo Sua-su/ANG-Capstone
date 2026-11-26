@@ -1,0 +1,320 @@
+/* ============================================================================
+   RESET & GLOBAL
+   ============================================================================ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+  /* ============================================================================
+     DESIGN TOKENS — Soft UI
+     ============================================================================ */
+  :root {
+    --radius-sm: 10px;
+    --radius-md: 14px;
+    --radius-lg: 20px;
+    --radius-xl: 24px;
+    --radius-pill: 9999px;
+
+    --shadow-soft-xs: 0 2px 6px rgba(15, 35, 52, 0.05);
+    --shadow-soft-sm: 0 4px 14px rgba(15, 35, 52, 0.06), 0 2px 6px rgba(15, 35, 52, 0.04);
+    --shadow-soft-md: 0 8px 28px rgba(15, 35, 52, 0.08), 0 4px 12px rgba(15, 35, 52, 0.05);
+    --shadow-soft-lg: 0 16px 48px rgba(15, 35, 52, 0.1), 0 8px 24px rgba(15, 35, 52, 0.06);
+    --shadow-soft-hover: 0 12px 32px rgba(58, 92, 173, 0.18), 0 6px 16px rgba(15, 35, 52, 0.08);
+    --shadow-focus-glow: 0 0 0 4px rgba(58, 92, 173, 0.18), 0 4px 16px rgba(58, 92, 173, 0.12);
+
+    --space-xs: 8px;
+    --space-sm: 12px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 32px;
+    --space-2xl: 40px;
+
+    --color-bg: #e8eef2;
+    --color-surface: #ffffff;
+    --color-surface-muted: #f4f8fa;
+    --color-surface-elevated: #ffffff;
+    --color-border-subtle: rgba(15, 35, 52, 0.06);
+    --color-primary: #3a5cad;
+    --color-primary-hover: #2d4a8e;
+    --color-primary-soft: rgba(58, 92, 173, 0.08);
+    --color-text: #2a3a45;
+    --color-text-muted: #6b7c88;
+
+    --input-bg: #f0f4f7;
+    --input-shadow-inset: inset 0 1px 3px rgba(15, 35, 52, 0.05);
+    --transition-soft: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--color-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+#root {
+  width: 100%;
+  height: 100vh;
+}
+/* ============================================================================
+   LAYOUT
+   ============================================================================ */
+.app {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.dashboard {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+    background: var(--color-bg);
+}
+
+.dashboard-content {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+  .dashboard-content.full-width .main-content {
+    padding: 0;
+  }
+
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-lg);
+  min-height: 0;
+}
+
+.main-content--fill {
+  overflow: hidden;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 1366px) {
+  .main-content {
+    padding: var(--space-md);
+  }
+
+  .dashboard-content,
+  .main-content,
+  .page-content {
+    min-width: 0;
+  }
+
+  .page-content {
+    padding: var(--space-lg);
+  }
+}
+/* ============================================================================
+   BUTTONS
+   ============================================================================ */
+.btn {
+    padding: 12px 22px;
+  border: none;
+    border-radius: var(--radius-pill);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+    transition: var(--transition-soft);
+    box-shadow: var(--shadow-soft-sm);
+}
+
+.btn-primary {
+    background: var(--color-primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+    background: var(--color-primary-hover);
+    box-shadow: var(--shadow-soft-hover);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+    box-shadow: var(--shadow-soft-sm);
+}
+
+.btn-secondary {
+    background: var(--color-surface-muted);
+    color: var(--color-primary);
+    padding: 12px 20px;
+  margin-top: 10px;
+    box-shadow: var(--shadow-soft-xs);
+}
+
+.btn-secondary:hover {
+    background: var(--color-surface);
+    box-shadow: var(--shadow-soft-md);
+    transform: translateY(-1px);
+}
+
+.btn-danger {
+    background: #ff6b7a;
+  color: white;
+    box-shadow: 0 4px 16px rgba(255, 107, 122, 0.25);
+}
+
+.btn-danger:hover {
+    background: #ff4d5e;
+    box-shadow: 0 8px 24px rgba(255, 107, 122, 0.35);
+    transform: translateY(-1px);
+}
+/* ============================================================================
+   PAGE CONTENT
+   ============================================================================ */
+.page-content {
+    background: var(--color-surface);
+    padding: var(--space-xl);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-soft-md);
+    border: none;
+}
+
+.page-content h1 {
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 28px;
+}
+
+.page-content p {
+  color: #666;
+  font-size: 16px;
+}
+/* ============================================================================
+   MODAL
+   ============================================================================ */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+    background: var(--color-surface);
+    border-radius: var(--radius-xl);
+    padding: var(--space-xl);
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+    border: none;
+    box-shadow: var(--shadow-soft-lg);
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.modal-close {
+  border: none;
+    background: var(--color-surface-muted);
+    border-radius: var(--radius-pill);
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  cursor: pointer;
+    font-size: 22px;
+    transition: var(--transition-soft);
+    box-shadow: var(--shadow-soft-xs);
+  color: #333;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+  /* ============================================================================
+     SOFT UI — Global input & card polish
+     ============================================================================ */
+  textarea:not(.prompt-textarea),
+  select:not(.scope-select) {
+    border: none;
+    border-radius: var(--radius-lg);
+    background: var(--input-bg);
+    box-shadow: var(--input-shadow-inset);
+    transition: var(--transition-soft);
+  }
+
+  textarea:not(.prompt-textarea):focus,
+  select:not(.scope-select):focus {
+    outline: none;
+    background: var(--color-surface);
+    box-shadow: var(--shadow-focus-glow);
+  }
+
+  .board-search,
+  .board-page input[type="text"] {
+    border: none !important;
+    border-radius: var(--radius-pill) !important;
+    background: var(--input-bg) !important;
+    box-shadow: var(--input-shadow-inset) !important;
+    padding: 12px 18px !important;
+    transition: var(--transition-soft);
+  }
+
+  .board-search:focus,
+  .board-page input[type="text"]:focus {
+    outline: none !important;
+    background: var(--color-surface) !important;
+    box-shadow: var(--shadow-focus-glow) !important;
+  }
+
+  .btn-submit,
+  .btn-cancel {
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-soft-sm);
+    transition: var(--transition-soft);
+  }
+
+  .btn-submit:hover {
+    box-shadow: var(--shadow-soft-hover);
+    transform: translateY(-1px);
+}

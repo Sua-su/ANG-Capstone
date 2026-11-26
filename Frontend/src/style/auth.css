@@ -1,0 +1,131 @@
+/* ============================================================================
+   AUTH
+   ============================================================================ */
+.auth-container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, var(--color-primary-hover) 0%, var(--color-primary) 100%);
+}
+
+/* ── 왼쪽 브랜드 영역 ── */
+.auth-brand {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 16px;
+  padding-right: 60px;
+}
+
+.auth-brand-logo {
+  font-size: 100px;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -2px;
+  line-height: 1;
+  text-shadow: 0 4px 32px rgba(0,0,0,0.15);
+}
+
+.auth-brand-sub {
+  font-size: 18px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.7);
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
+/* ── 오른쪽 로그인 패널 ── */
+.auth-panel {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 60px;
+}
+
+.auth-box {
+  background: var(--color-surface);
+  padding: 48px 44px;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-soft-lg);
+  border: none;
+  width: 100%;
+  max-width: 400px;
+}
+
+.auth-box .btn {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 16px;
+}
+
+.auth-box h1 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 30px;
+  font-size: 28px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #555;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+    padding: 14px 18px;
+    border: none;
+    border-radius: var(--radius-pill);
+    background: var(--input-bg);
+    box-shadow: var(--input-shadow-inset);
+  font-size: 14px;
+    color: var(--color-text);
+    transition: var(--transition-soft);
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+    background: var(--color-surface);
+    box-shadow: var(--shadow-focus-glow);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+
+  border-top: 1px solid #eee;
+  padding-top: 20px;
+}
+
+.auth-footer p {
+  color: #999;
+  font-size: 14px;
+  margin: 10px;
+}
+
+.logo {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.logo h1,
+.logo h2 {
+  color: white;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: 1px;
+}
